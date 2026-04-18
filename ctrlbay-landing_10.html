@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTRLbay.in — Crafted by Gamers. Powered by You.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg:        #0c0c0c;
+      --surface:   #121212;
+      --card:      #161616;
+      --card-hover:#1a1a1a;
+      --accent:    #4ade80;
+      --accent-dim: rgba(74,222,128,0.07);
+      --border:    rgba(255,255,255,0.07);
+      --white:     #efefef;
+      --muted:     #666;
+      --muted2:    #3a3a3a;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: rgba(74,222,128,0.2); color: var(--white); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ── SCROLL PROGRESS ── */
+    #scroll-bar {
+      position: fixed; top: 0; left: 0;
+      height: 1px; width: 0%;
+      background: var(--accent);
+      opacity: 0.5;
+      z-index: 9000;
+      transition: width 0.1s linear;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: padding 0.35s ease, background 0.35s ease, border-color 0.35s ease;
+      border-bottom: 1px solid transparent;
+    }
+    nav.stuck {
+      padding: 16px 60px;
+      background: rgba(12,12,12,0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-color: var(--border);
+    }
+
+    /* ── LOGO — replaceable ── */
+    /*
+      To use your own logo image, replace the .logo-text element inside .logo
+      with: <img src="your-logo.png" alt="CTRLbay" class="logo-img" />
+      and set the desired height via --logo-height below.
+    */
+    :root { --logo-height: 28px; }
+    .logo {
+      display: flex;
+      align-items: center;
+      height: var(--logo-height);
+      flex-shrink: 0;
+    }
+    .logo-img {
+      height: var(--logo-height);
+      width: auto;
+      object-fit: contain;
+    }
+    .logo-text {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      line-height: 1;
+    }
+    .logo-text em { color: var(--accent); font-style: normal; opacity: 0.85; }
+
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-btn {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--white);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: border-color 0.25s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover { border-color: rgba(255,255,255,0.22); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 1px; background: var(--muted); transition: 0.3s; }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 60px;
+      overflow: hidden;
+      gap: 60px;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(74,222,128,0.05) 0%, transparent 70%);
+      top: 50%; right: 0;
+      transform: translateY(-50%);
+      pointer-events: none; z-index: 0;
+    }
+    .hero-left { position: relative; z-index: 1; padding: 120px 0 120px; }
+
+    /* hero right — bubble arena */
+    .hero-right {
+      position: relative; z-index: 1;
+      padding: 80px 0;
+      height: 100%;
+      min-height: 480px;
+    }
+
+    #bubble-arena {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* PC illustration background */
+    #pc-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #pc-bg svg {
+      width: 88%;
+      max-width: 460px;
+      height: auto;
+      opacity: 0.22;
+      filter: drop-shadow(0 0 40px rgba(74,222,128,0.25));
+    }
+    /* Very subtle breathing glow on the svg */
+    @keyframes pc-breathe {
+      0%, 100% { opacity: 0.22; filter: drop-shadow(0 0 40px rgba(74,222,128,0.25)); }
+      50%       { opacity: 0.28; filter: drop-shadow(0 0 60px rgba(74,222,128,0.4)); }
+    }
+    #pc-bg svg { animation: pc-breathe 5s ease-in-out infinite; }
+
+    /* Vignette overlay so bubbles read clearly */
+    #bubble-arena::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%,
+        transparent 30%,
+        rgba(12,12,12,0.55) 100%
+      );
+      pointer-events: none;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(74,222,128,0.35);
+      background: radial-gradient(circle at 35% 35%,
+        rgba(74,222,128,0.18) 0%,
+        rgba(74,222,128,0.06) 45%,
+        rgba(74,222,128,0.02) 100%
+      );
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      z-index: 2;
+      /* shine */
+      box-shadow:
+        inset 2px 3px 8px rgba(255,255,255,0.08),
+        inset -2px -2px 6px rgba(0,0,0,0.2),
+        0 0 20px rgba(74,222,128,0.06);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .bubble:hover {
+      border-color: rgba(74,222,128,0.7);
+      box-shadow:
+        inset 2px 3px 8px rgba(255,255,255,0.12),
+        inset -2px -2px 6px rgba(0,0,0,0.2),
+        0 0 32px rgba(74,222,128,0.18);
+    }
+    .bubble-label {
+      font-family: var(--font-head);
+      font-weight: 700;
+      color: rgba(239,239,239,0.9);
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      padding: 0 14px;
+      pointer-events: none;
+    }
+
+    /* Pop animation */
+    @keyframes bubble-pop {
+      0%   { transform: scale(1);   opacity: 1; }
+      40%  { transform: scale(1.25); opacity: 0.8; }
+      70%  { transform: scale(0.85); opacity: 0.4; }
+      100% { transform: scale(0);   opacity: 0; }
+    }
+    .bubble.popping {
+      animation: bubble-pop 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+      pointer-events: none;
+    }
+
+    /* Particle burst on pop */
+    .pop-particle {
+      position: absolute;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      pointer-events: none;
+      opacity: 1;
+      z-index: 3;
+    }
+    @keyframes particle-fly {
+      0%   { transform: translate(0,0) scale(1); opacity: 0.9; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+
+    /* Stats bar — inside hero-left */
+    .hero-meta {
+      display: flex;
+      gap: 36px;
+      border-top: 1px solid var(--border);
+      padding-top: 26px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .meta-val {
+      font-family: var(--font-head);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 5px;
+      letter-spacing: -0.02em;
+    }
+    .meta-val span { color: var(--accent); }
+    .meta-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── LOADING SCREEN ── */
+    #loader {
+      position: fixed; inset: 0;
+      background: #0c0c0c;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      overflow: hidden;
+    }
+    #loader.done {
+      pointer-events: none;
+      animation: loader-exit 0.7s cubic-bezier(0.76,0,0.24,1) 0.1s forwards;
+    }
+    @keyframes loader-exit {
+      0%   { clip-path: inset(0 0 0 0); opacity: 1; }
+      100% { clip-path: inset(0 0 100% 0); opacity: 1; }
+    }
+
+    .loader-logo {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      display: flex;
+      gap: 0;
+      overflow: hidden;
+    }
+    .loader-logo .lchar {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: char-in 0.5s cubic-bezier(0.34,1.3,0.64,1) forwards;
+    }
+    .loader-logo .lchar.accent { color: var(--accent); }
+    @keyframes char-in {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .loader-tagline {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fade-in-slow 0.6s ease 0.9s forwards;
+    }
+    @keyframes fade-in-slow { to { opacity: 1; } }
+
+    .loader-bar-wrap {
+      width: 180px;
+      height: 1px;
+      background: var(--muted2);
+      position: relative;
+      overflow: hidden;
+    }
+    .loader-bar {
+      position: absolute; inset: 0;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: bar-fill 1.1s cubic-bezier(0.4,0,0.2,1) 0.5s forwards;
+    }
+    @keyframes bar-fill { to { transform: scaleX(1); } }
+
+    /* Grid overlay on loader — same as hero */
+    #loader::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black, transparent);
+      pointer-events: none;
+    }
+    /* Accent glow behind logo */
+    #loader::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(74,222,128,0.07) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background-color: var(--border);
+    }
+    .stat-item {
+      background: var(--surface);
+      padding: 32px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+    .stat-item:hover { background: var(--card); }
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 1px; width: 0;
+      background: var(--accent);
+      opacity: 0.4;
+      transition: width 0.4s ease;
+    }
+    .stat-item:hover::after { width: 100%; }
+    .stat-val {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.03em;
+    }
+    .stat-val span { color: var(--accent); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2.8rem, 5.5vw, 5.4rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    h1 .line-accent { color: var(--accent); }
+    h1 .line-dim {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+    }
+
+    .hero-sub {
+      font-size: 0.97rem;
+      color: var(--muted);
+      max-width: 420px;
+      line-height: 1.85;
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+    }
+    .btn-fill {
+      background: var(--white);
+      color: var(--bg);
+      border-color: var(--white);
+    }
+    .btn-fill:hover { background: transparent; color: var(--white); }
+    .btn-outline {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--border);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.22); color: var(--white); }
+    .btn svg { transition: transform 0.25s ease; flex-shrink: 0; }
+    .btn:hover svg { transform: translateX(3px); }
+
+    /* ── MARQUEE ── */
+    .marquee-strip {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      background: var(--surface);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-item {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 36px;
+      white-space: nowrap;
+    }
+    .marquee-item .sep { color: var(--muted2); margin: 0 8px; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 120px 60px; }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      color: var(--white);
+    }
+    h2 .a { color: var(--accent); }
+    .section-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 440px;
+      margin-top: 16px;
+    }
+
+    /* ── ANIMATION BASE STATES ── */
+    /* fade-up */
+    .anim-fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    /* fade-in (no movement) */
+    .anim-fade-in {
+      opacity: 0;
+    }
+    /* slide from left */
+    .anim-slide-left {
+      opacity: 0;
+      transform: translateX(-32px);
+    }
+    /* slide from right */
+    .anim-slide-right {
+      opacity: 0;
+      transform: translateX(32px);
+    }
+    /* scale up slightly */
+    .anim-scale {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+    /* clip reveal — uses clip-path */
+    .anim-clip {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+    }
+
+    /* ── BUILDS ── */
+    #builds { background: var(--surface); }
+    .builds-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .builds-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .build-card {
+      background: var(--card);
+      padding: 40px 32px 70px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .build-card:hover { background: var(--card-hover); }
+    .build-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      opacity: 0.5;
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.35s ease;
+    }
+    .build-card:hover::before { transform: scaleY(1); }
+
+    .card-tier {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--muted2);
+      flex-shrink: 0;
+    }
+    .build-card.featured .tier-dot { background: var(--accent); opacity: 0.7; }
+    .build-card.featured .card-tier { color: var(--accent); opacity: 0.8; }
+
+    .card-name {
+      font-family: var(--font-head);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    .card-price {
+      font-family: var(--font-head);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .card-from {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--muted2);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .card-cta {
+      position: absolute;
+      bottom: 30px; right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      transition: color 0.25s;
+    }
+    .build-card:hover .card-cta { color: var(--accent); }
+    .card-cta svg { transition: transform 0.25s; }
+    .build-card:hover .card-cta svg { transform: translateX(3px); }
+
+    .card-n {
+      position: absolute;
+      top: 24px; right: 24px;
+      font-family: var(--font-head);
+      font-size: 4rem;
+      font-weight: 800;
+      color: rgba(255,255,255,0.025);
+      line-height: 1;
+    }
+
+    /* ── WHY ── */
+    #why { background: var(--bg); }
+    .why-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 96px;
+      align-items: start;
+    }
+    .why-left { padding-top: 4px; }
+    .usps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+    .usp {
+      background: var(--card);
+      padding: 30px 26px;
+      transition: background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .usp:hover { background: var(--card-hover); }
+    .usp-icon { font-size: 1.2rem; margin-bottom: 14px; }
+    .usp-title {
+      font-family: var(--font-head);
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+    .usp-body { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+    .usp::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+      transition: width 0.35s ease;
+    }
+    .usp:hover::after { width: 100%; }
+
+    /* ── PROCESS ── */
+    #process { background: var(--surface); }
+    .process-head { margin-bottom: 76px; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 19px; left: calc(12.5% + 8px); right: calc(12.5% + 8px);
+      height: 1px;
+      background: var(--border);
+    }
+    .step { padding-right: 24px; }
+    .step-circle {
+      width: 40px; height: 40px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 26px;
+      background: var(--surface);
+      transition: border-color 0.3s, background 0.3s;
+      position: relative; z-index: 1;
+    }
+    .step:hover .step-circle { border-color: rgba(74,222,128,0.3); background: var(--accent-dim); }
+    .step-n {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .step:hover .step-n { color: var(--accent); }
+    .step-title {
+      font-family: var(--font-head);
+      font-size: 0.97rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .step-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.75; }
+
+    /* ── TESTIMONIALS ── */
+    #testimonials { background: var(--bg); }
+    .testi-head { margin-bottom: 56px; }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .testi-card {
+      background: var(--card);
+      padding: 36px 30px;
+      transition: background 0.25s;
+      position: relative;
+    }
+    .testi-card:hover { background: var(--card-hover); }
+    .stars { display: flex; gap: 3px; margin-bottom: 20px; }
+    .stars span { color: var(--accent); font-size: 0.74rem; opacity: 0.7; }
+    .quote {
+      font-size: 0.88rem;
+      color: rgba(239,239,239,0.65);
+      line-height: 1.85;
+      margin-bottom: 28px;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--card-hover);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .author-name { font-size: 0.85rem; font-weight: 600; }
+    .author-role {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .verified {
+      position: absolute;
+      top: 24px; right: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.54rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.5;
+    }
+
+    /* ── CTA ── */
+    #cta {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .cta-wrap { max-width: 600px; margin: 0 auto; text-align: center; }
+    .cta-wrap .section-label { justify-content: center; display: flex; }
+    .cta-wrap h2 { margin-top: 4px; }
+    .cta-wrap .section-desc { margin: 18px auto 42px; }
+    .cta-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .cta-fn {
+      margin-top: 22px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      padding: 64px 60px 38px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 2fr;
+      gap: 64px;
+      margin-bottom: 56px;
+      align-items: start;
+    }
+    /* On desktop the 3 link columns sit inside footer-links-grid */
+    .footer-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px;
+    }
+    .footer-desc {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 240px;
+      margin-top: 12px;
+    }
+    .footer-col-head {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 14px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a { font-size: 0.83rem; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 26px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--muted2);
+    }
+    .footer-socials { display: flex; gap: 18px; }
+    .footer-socials a {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      color: var(--muted2);
+      transition: color 0.2s;
+    }
+    .footer-socials a:hover { color: var(--white); }
+
+    /* Mobile footer — logo full width, links compact 3-col */
+    @media (max-width: 480px) {
+      footer { padding: 40px 24px 24px; }
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+        margin-bottom: 0;
+      }
+      /* Logo + desc row */
+      .footer-brand {
+        padding-bottom: 28px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+      }
+      /* 3 link columns side by side */
+      .footer-links-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+      .footer-col-head { margin-bottom: 10px; font-size: 0.55rem; }
+      .footer-links { gap: 8px; }
+      .footer-links a { font-size: 0.78rem; }
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-top: 20px;
+      }
+      .footer-socials { gap: 14px; flex-wrap: wrap; }
+    }
+
+    /* ── MOBILE MENU ── */
+    .mob-menu {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(12,12,12,0.97);
+      z-index: 800;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mob-menu.open { display: flex; }
+    .mob-menu a {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      transition: color 0.2s;
+    }
+    .mob-menu a:hover { color: var(--accent); }
+    .mob-close {
+      position: absolute; top: 22px; right: 26px;
+      background: none; border: none;
+      color: var(--muted); font-size: 1.3rem; cursor: pointer;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      nav, nav.stuck { padding-left: 40px; padding-right: 40px; }
+      #hero { padding-left: 40px; padding-right: 40px; gap: 40px; }
+      section { padding: 100px 40px; }
+      footer { padding: 56px 40px 32px; }
+      .builds-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-wrap { gap: 60px; }
+      .stats-strip { padding: 0; }
+      .stat-item { padding: 28px 30px; }
+    }
+
+    @media (max-width: 900px) {
+      #hero { grid-template-columns: 1fr; gap: 0; padding: 0 40px; }
+      .hero-left { padding-bottom: 40px; }
+      .hero-right { padding-top: 0; padding-bottom: 60px; min-height: 360px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .testi-grid  { grid-template-columns: repeat(2, 1fr); }
+      .why-wrap    { grid-template-columns: 1fr; gap: 48px; }
+      .steps       { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+      .steps::before { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      nav, nav.stuck { padding: 16px 24px; }
+      .nav-links, .nav-btn { display: none; }
+      .hamburger { display: flex; }
+      #hero { grid-template-columns: 1fr; padding: 0 24px; }
+      .hero-left { padding-top: 100px; padding-bottom: 80px; }
+      .hero-right { display: none; }   /* bubbles off on mobile */
+      .hero-meta { gap: 24px; margin-top: 32px; padding-top: 22px; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      section { padding: 80px 24px; }
+      footer { padding: 48px 24px 28px; }
+      .builds-grid { grid-template-columns: 1fr; }
+      .testi-grid  { grid-template-columns: 1fr; }
+      .usps        { grid-template-columns: 1fr; }
+      .steps       { grid-template-columns: 1fr; }
+      .why-wrap    { gap: 48px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-left { padding-top: 90px; }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(2.4rem, 13vw, 3.2rem); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOADING SCREEN ── -->
+  <div id="loader">
+    <div class="loader-logo" id="loader-logo"></div>
+    <div class="loader-tagline">Crafted by Gamers. Powered by You.</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  </div>
+
+  <div id="scroll-bar"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <!--
+      LOGO: To swap to an image logo, replace the <span class="logo-text"> block below with:
+      <img src="your-logo.png" alt="CTRLbay" class="logo-img" />
+      Adjust --logo-height in :root to scale it.
+    -->
+    <a href="#" class="logo">
+      <span class="logo-text">CTRL<em>bay</em><em style="color:rgba(74,222,128,0.55);">.in</em></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#builds">Builds</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+    </ul>
+    <button class="nav-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Start a Build</button>
+    <div class="hamburger" id="ham" onclick="toggleMob()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mob-menu" id="mobMenu">
+    <button class="mob-close" onclick="toggleMob()">✕</button>
+    <a href="#builds"       onclick="toggleMob()">Builds</a>
+    <a href="#why"          onclick="toggleMob()">Why Us</a>
+    <a href="#process"      onclick="toggleMob()">Process</a>
+    <a href="#testimonials" onclick="toggleMob()">Reviews</a>
+    <a href="#cta"          onclick="toggleMob()">Build Yours</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+
+    <!-- LEFT — copy + stats -->
+    <div class="hero-left">
+      <h1 id="h-head">
+        <span class="line-dim">Power.</span><br>
+        <span>Precision.</span><br>
+        <span class="line-accent">CTRL.</span>
+      </h1>
+      <p class="hero-sub" id="h-sub">
+        Fully custom gaming PCs built around you, your games, your budget, your specs. No off-the-shelf compromises. No guesswork. Just handcrafted performance, start to finish.
+      </p>
+      <div class="hero-actions" id="h-act">
+        <a href="#builds" class="btn btn-fill">
+          View Prebuilds
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M2 6.5h9M7.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#process" class="btn btn-outline">
+          How It Works
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M2 6.5h9M7.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <!-- Stats — inline, visible on hero -->
+      
+    </div>
+
+    <!-- RIGHT — bubble arena -->
+    <div class="hero-right" id="h-right">
+      <div id="bubble-arena">
+
+        <!-- PC build illustration background -->
+        <div id="pc-bg">
+          <svg viewBox="0 0 440 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="caseGrad" x1="0" y1="0" x2="440" y2="520" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#1e1e1e"/>
+                <stop offset="100%" stop-color="#0f0f0f"/>
+              </linearGradient>
+              <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2a2a2a"/>
+                <stop offset="100%" stop-color="#161616"/>
+              </linearGradient>
+              <linearGradient id="greenGlow" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#4ade80" stop-opacity="0"/>
+                <stop offset="50%" stop-color="#4ade80" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="greenGlowV" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4ade80" stop-opacity="0"/>
+                <stop offset="50%" stop-color="#4ade80" stop-opacity="0.8"/>
+                <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+              </linearGradient>
+              <radialGradient id="gpuGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#4ade80" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="fanGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#4ade80" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+              </radialGradient>
+              <filter id="blur4">
+                <feGaussianBlur stdDeviation="4"/>
+              </filter>
+              <filter id="blur8">
+                <feGaussianBlur stdDeviation="8"/>
+              </filter>
+            </defs>
+
+            <!-- Case body -->
+            <rect x="30" y="20" width="380" height="480" rx="8" fill="url(#caseGrad)" stroke="#2a2a2a" stroke-width="1.5"/>
+
+            <!-- Tempered glass panel (left side) -->
+            <rect x="30" y="20" width="80" height="480" rx="8" fill="#1a1a1a" stroke="#252525" stroke-width="1"/>
+            <!-- Glass reflection -->
+            <rect x="34" y="24" width="12" height="470" rx="4" fill="white" fill-opacity="0.025"/>
+
+            <!-- Interior background -->
+            <rect x="110" y="30" width="290" height="460" rx="4" fill="#111111"/>
+
+            <!-- ── MOTHERBOARD ── -->
+            <rect x="120" y="50" width="200" height="260" rx="3" fill="#131a13" stroke="#1e2e1e" stroke-width="1"/>
+            <!-- Mobo circuit lines -->
+            <line x1="130" y1="80" x2="310" y2="80" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="130" y1="110" x2="310" y2="110" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="130" y1="140" x2="310" y2="140" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="160" y1="50" x2="160" y2="310" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="200" y1="50" x2="200" y2="310" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="240" y1="50" x2="240" y2="310" stroke="#1f2e1f" stroke-width="0.5"/>
+            <line x1="280" y1="50" x2="280" y2="310" stroke="#1f2e1f" stroke-width="0.5"/>
+
+            <!-- CPU socket -->
+            <rect x="140" y="60" width="80" height="80" rx="2" fill="#0d140d" stroke="#4ade80" stroke-width="0.6" stroke-opacity="0.5"/>
+            <rect x="148" y="68" width="64" height="64" rx="1" fill="#0a120a" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.3"/>
+            <!-- CPU die -->
+            <rect x="158" y="78" width="44" height="44" rx="1" fill="#162316" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.6"/>
+            <!-- CPU glow -->
+            <rect x="158" y="78" width="44" height="44" rx="1" fill="url(#gpuGlow)" filter="url(#blur4)"/>
+            <!-- IHS highlight -->
+            <line x1="163" y1="83" x2="195" y2="83" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.4"/>
+            <line x1="163" y1="83" x2="163" y2="115" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.4"/>
+
+            <!-- RAM sticks -->
+            <rect x="230" y="58" width="16" height="100" rx="1" fill="#121e12" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.4"/>
+            <rect x="250" y="58" width="16" height="100" rx="1" fill="#121e12" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.4"/>
+            <rect x="270" y="58" width="16" height="100" rx="1" fill="#121e12" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.4"/>
+            <!-- RAM LED bars -->
+            <rect x="230" y="58" width="16" height="6" rx="1" fill="url(#greenGlowV)"/>
+            <rect x="250" y="58" width="16" height="6" rx="1" fill="url(#greenGlowV)"/>
+            <rect x="270" y="58" width="16" height="6" rx="1" fill="url(#greenGlowV)"/>
+
+            <!-- PCIe slots -->
+            <rect x="130" y="200" width="180" height="8" rx="1" fill="#0c180c" stroke="#2a3a2a" stroke-width="0.5"/>
+            <rect x="130" y="220" width="180" height="8" rx="1" fill="#0c180c" stroke="#2a3a2a" stroke-width="0.5"/>
+            <rect x="130" y="240" width="180" height="8" rx="1" fill="#0c180c" stroke="#2a3a2a" stroke-width="0.5"/>
+
+            <!-- M.2 NVMe slot -->
+            <rect x="145" y="160" width="80" height="18" rx="1" fill="#0e1a0e" stroke="#3a4a3a" stroke-width="0.5"/>
+            <rect x="147" y="163" width="60" height="12" rx="1" fill="#1a2a1a"/>
+            <!-- M.2 label glow -->
+            <rect x="147" y="163" width="60" height="2" fill="url(#greenGlow)" opacity="0.5"/>
+
+            <!-- ── GPU ── -->
+            <rect x="120" y="310" width="280" height="110" rx="4" fill="#0f1a0f" stroke="#4ade80" stroke-width="0.7" stroke-opacity="0.4"/>
+            <!-- GPU shroud -->
+            <rect x="125" y="315" width="270" height="100" rx="3" fill="#111a11"/>
+            <!-- GPU glow bloom -->
+            <rect x="120" y="310" width="280" height="110" rx="4" fill="url(#gpuGlow)" filter="url(#blur8)" opacity="0.6"/>
+            <!-- Fan circles (3 fans) -->
+            <circle cx="185" cy="365" r="38" fill="none" stroke="#4ade80" stroke-width="0.6" stroke-opacity="0.4"/>
+            <circle cx="185" cy="365" r="28" fill="none" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="185" cy="365" r="10" fill="#162416" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.5"/>
+            <!-- Fan blades -->
+            <line x1="185" y1="337" x2="185" y2="327" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="185" y1="393" x2="185" y2="403" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="157" y1="365" x2="147" y2="365" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="213" y1="365" x2="223" y2="365" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="165" y1="345" x2="158" y2="338" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="205" y1="385" x2="212" y2="392" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="205" y1="345" x2="212" y2="338" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="165" y1="385" x2="158" y2="392" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+
+            <circle cx="275" cy="365" r="38" fill="none" stroke="#4ade80" stroke-width="0.6" stroke-opacity="0.4"/>
+            <circle cx="275" cy="365" r="28" fill="none" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="275" cy="365" r="10" fill="#162416" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.5"/>
+            <line x1="275" y1="337" x2="275" y2="327" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="275" y1="393" x2="275" y2="403" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="247" y1="365" x2="237" y2="365" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+            <line x1="303" y1="365" x2="313" y2="365" stroke="#4ade80" stroke-width="0.8" stroke-opacity="0.35"/>
+
+            <!-- GPU LED strip -->
+            <rect x="125" y="408" width="270" height="4" rx="2" fill="url(#greenGlow)" opacity="0.9"/>
+
+            <!-- ── CASE FANS (right wall) ── -->
+            <!-- Fan 1 -->
+            <circle cx="380" cy="120" r="40" fill="none" stroke="#2a3a2a" stroke-width="1"/>
+            <circle cx="380" cy="120" r="30" fill="none" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="380" cy="120" r="8" fill="#162416" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.4"/>
+            <circle cx="380" cy="120" r="40" fill="url(#fanGlow)"/>
+            <!-- Fan corners -->
+            <rect x="342" y="82" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="390" y="82" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="342" y="152" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="390" y="152" width="6" height="6" rx="1" fill="#1a2a1a"/>
+
+            <!-- Fan 2 -->
+            <circle cx="380" cy="230" r="40" fill="none" stroke="#2a3a2a" stroke-width="1"/>
+            <circle cx="380" cy="230" r="30" fill="none" stroke="#4ade80" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="380" cy="230" r="8" fill="#162416" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.4"/>
+            <circle cx="380" cy="230" r="40" fill="url(#fanGlow)"/>
+            <rect x="342" y="192" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="390" y="192" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="342" y="262" width="6" height="6" rx="1" fill="#1a2a1a"/>
+            <rect x="390" y="262" width="6" height="6" rx="1" fill="#1a2a1a"/>
+
+            <!-- ── CABLES ── -->
+            <!-- ATX cable bundle -->
+            <path d="M320 60 Q340 80 340 120 Q340 160 360 180" stroke="#1e2e1e" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M322 60 Q342 80 342 120 Q342 160 362 180" stroke="#162416" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <!-- GPU power -->
+            <path d="M400 310 Q410 290 390 270 Q370 250 350 260" stroke="#1e2e1e" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+            <!-- ── PSU shroud (bottom) ── -->
+            <rect x="120" y="440" width="280" height="42" rx="3" fill="#0f0f0f" stroke="#222" stroke-width="1"/>
+            <rect x="125" y="445" width="270" height="32" rx="2" fill="#111"/>
+            <!-- PSU fan grill -->
+            <circle cx="390" cy="461" r="15" fill="none" stroke="#1e1e1e" stroke-width="1"/>
+            <line x1="375" y1="461" x2="405" y2="461" stroke="#1e1e1e" stroke-width="0.5"/>
+            <line x1="390" y1="446" x2="390" y2="476" stroke="#1e1e1e" stroke-width="0.5"/>
+
+            <!-- ── IO PANEL (back right) ── -->
+            <rect x="112" y="50" width="8" height="100" rx="1" fill="#181818" stroke="#222" stroke-width="0.5"/>
+            <!-- USB ports -->
+            <rect x="113" y="56" width="6" height="8" rx="0.5" fill="#0a0a0a"/>
+            <rect x="113" y="68" width="6" height="8" rx="0.5" fill="#0a0a0a"/>
+            <rect x="113" y="82" width="6" height="12" rx="0.5" fill="#4ade80" fill-opacity="0.15"/>
+            <rect x="113" y="98" width="6" height="4" rx="0.5" fill="#0a0a0a"/>
+            <rect x="113" y="106" width="6" height="4" rx="0.5" fill="#0a0a0a"/>
+
+            <!-- ── AMBIENT GREEN GLOW STRIPS ── -->
+            <!-- Top strip -->
+            <rect x="110" y="30" width="290" height="2" rx="1" fill="url(#greenGlow)" opacity="0.7"/>
+            <!-- Bottom strip -->
+            <rect x="110" y="488" width="290" height="2" rx="1" fill="url(#greenGlow)" opacity="0.5"/>
+            <!-- Left glass edge glow -->
+            <rect x="108" y="30" width="2" height="460" rx="1" fill="url(#greenGlowV)" opacity="0.6"/>
+
+            <!-- Case edge highlight -->
+            <rect x="30" y="20" width="380" height="480" rx="8" fill="none" stroke="white" stroke-width="0.5" stroke-opacity="0.04"/>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP — scroll triggered -->
+  <div class="stats-strip" id="stats-strip">
+    <div class="stat-item anim-fade-up">
+      <div class="stat-val">25<span>+</span></div>
+      <div class="stat-label">Builds Shipped</div>
+    </div>
+    <div class="stat-item anim-fade-up">
+      <div class="stat-val">4.9<span>★</span></div>
+      <div class="stat-label">Avg. Rating</div>
+    </div>
+    <div class="stat-item anim-fade-up">
+      <div class="stat-val">1<span>Year</span></div>
+      <div class="stat-label">Free Service</div>
+    </div>
+    <div class="stat-item anim-fade-up">
+      <div class="stat-val">100<span>%</span></div>
+      <div class="stat-label">Custom Built</div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <span class="marquee-item">Your Rig. Your Rules.<span class="sep">·</span></span>
+      <span class="marquee-item">Built for Victory<span class="sep">·</span></span>
+      <span class="marquee-item">Fully Custom Builds<span class="sep">·</span></span>
+      <span class="marquee-item">Handcrafted Performance<span class="sep">·</span></span>
+      <span class="marquee-item">Zero Pre-Configs<span class="sep">·</span></span>
+      <span class="marquee-item">India's Custom PC Studio<span class="sep">·</span></span>
+      <span class="marquee-item">Your Rig. Your Rules.<span class="sep">·</span></span>
+      <span class="marquee-item">Built for Victory<span class="sep">·</span></span>
+      <span class="marquee-item">Fully Custom Builds<span class="sep">·</span></span>
+      <span class="marquee-item">Handcrafted Performance<span class="sep">·</span></span>
+      <span class="marquee-item">Zero Pre-Configs<span class="sep">·</span></span>
+      <span class="marquee-item">India's Custom PC Studio<span class="sep">·</span></span>
+    </div>
+  </div>
+
+  <!-- BUILDS -->
+  <section id="builds">
+    <div class="builds-head">
+      <div>
+        <div class="section-label anim-fade-up">Featured Builds</div>
+        <h2 class="anim-fade-up">Pick Your <span class="a">Loadout.</span></h2>
+        <p class="section-desc anim-slide-left">Every system fully custom-built, benchmarked, and stress-tested before it ships.</p>
+      </div>
+     <!--<p class="section-desc anim-slide-left">Every system fully custom-built, benchmarked, and stress-tested before it ships.</p>-->  
+    </div>
+    
+    <div class="builds-grid">
+
+      <div class="build-card anim-slide-left">
+        <div class="card-n">01</div>
+        <div class="card-tier"><span class="tier-dot"></span>Entry Build</div>
+        <div class="card-name">The Rookie</div>
+        <p class="card-desc">Fully custom 1080p build. Ryzen 5 + RTX 4060. Picked and assembled for your specific use case, not a pre-packed box.</p>
+        <div class="card-cta">
+          View Build
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M1.5 9.5L9.5 1.5M9.5 1.5H4.5M9.5 1.5V6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="build-card anim-fade-up">
+        <div class="card-n">02</div>
+        <div class="card-tier"><span class="tier-dot"></span>Mid-Range</div>
+        <div class="card-name">The Operator</div>
+        <p class="card-desc">Custom 1440p rig. i5-13600K + RTX 4070 Super. Tuned for your workflow, whether that's gaming, streaming, or both.</p>
+        <div class="card-cta">
+          View Build
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M1.5 9.5L9.5 1.5M9.5 1.5H4.5M9.5 1.5V6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="build-card featured anim-slide-right">
+        <div class="card-n">03</div>
+        <div class="card-tier"><span class="tier-dot"></span>Flagship · Most Popular</div>
+        <div class="card-name">The Overlord</div>
+        <p class="card-desc">Fully custom 4K flagship. i9-13900K + RTX 4090. Built around zero compromise. For people who know exactly what they want.</p>
+        <div class="card-cta">
+          View Build
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M1.5 9.5L9.5 1.5M9.5 1.5H4.5M9.5 1.5V6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="why-wrap">
+      <div class="why-left">
+        <div class="section-label anim-slide-left">Why CTRLbay</div>
+        <h2 class="anim-slide-left">We don't just<br>build PCs.<br><span class="a">We build yours.</span></h2>
+        <p class="section-desc anim-slide-left">Every component handpicked for your specific build. Every cable managed. Every system stress-tested. Fully custom, start to finish, no pre-packaged shortcuts.</p>
+        <a href="#cta" class="btn btn-outline anim-fade-up" style="margin-top:36px;">Get a Free Quote →</a>
+      </div>
+      <div class="usps">
+        <div class="usp anim-scale">
+          <div class="usp-icon">🔧</div>
+          <div class="usp-title">Expert Assembly</div>
+          <p class="usp-body">Certified technicians with 5+ years in custom PC building. No shortcuts, ever.</p>
+        </div>
+        <div class="usp anim-scale">
+          <div class="usp-icon">⚡</div>
+          <div class="usp-title">Fully Custom Builds</div>
+          <p class="usp-body">No pre-configured boxes, no filler parts. Every build starts from your use case, your games, your budget.</p>
+        </div>
+        <div class="usp anim-scale">
+          <div class="usp-icon">🛡️</div>
+          <div class="usp-title">1 Year Free Service</div>
+          <p class="usp-body">Full post-sales support for a year. Performance tuning, software issues, hardware checks included.</p>
+        </div>
+        <div class="usp anim-scale">
+          <div class="usp-icon">📞</div>
+          <div class="usp-title">True Post-Sales Support</div>
+          <p class="usp-body">You run into any issues, we’re here to help. Real support whenever you need it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="process-head">
+      <div class="section-label anim-fade-up">How It Works</div>
+      <h2 class="anim-fade-up">Four steps to <span class="a">your rig.</span></h2>
+    </div>
+    <div class="steps">
+      <div class="step anim-fade-up">
+        <div class="step-circle"><span class="step-n">01</span></div>
+        <div class="step-title">Tell Us Your Vision</div>
+        <p class="step-desc">Quick form or a chat, game type, resolution, budget. We listen before we build anything.</p>
+      </div>
+      <div class="step anim-fade-up">
+        <div class="step-circle"><span class="step-n">02</span></div>
+        <div class="step-title">We Design Your Custom Build</div>
+        <p class="step-desc">A fully custom parts list built around your needs, not a pre-configured template. No upselling, no filler components.</p>
+      </div>
+      <div class="step anim-fade-up">
+        <div class="step-circle"><span class="step-n">03</span></div>
+        <div class="step-title">Assemble & Stress-Test</div>
+        <p class="step-desc">Clean assembly, BIOS tuning, and a 24-hour burn-in test. Every single build, no exceptions.</p>
+      </div>
+      <div class="step anim-fade-up">
+        <div class="step-circle"><span class="step-n">04</span></div>
+        <div class="step-title">Delivered to Your Door</div>
+        <p class="step-desc">Packed securely, shipped fast. Boot up, plug in, and start winning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="testi-head">
+      <div class="section-label anim-fade-up">Customer Reviews</div>
+      <h2 class="anim-fade-up">Straight from <span class="a">the battlefield.</span></h2>
+    </div>
+    <div class="testi-grid">
+
+      <div class="testi-card anim-scale">
+        <span class="verified">Verified</span>
+        <div class="stars"><span>★★★★★</span></div>
+        <p class="quote">Reached out to CTRLbay just for advice and didn’t expect much, but they actually took time to explain everything properly. No pushing expensive parts or anything, just helped me understand what makes sense for my budget.</p>
+        <div class="testi-author">
+          <div class="avatar">AK</div>
+          <div>
+            <div class="author-name">Arjun K.</div>
+            <div class="author-role">FPS Player · Hyderabad</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card anim-scale">
+        <span class="verified">Verified</span>
+        <div class="stars"><span>★★★★★</span></div>
+        <p class="quote">Got my PC built through CTRLbay and honestly the best part was the guidance. They helped me pick parts that actually made sense instead of just going for expensive stuff. Everything works perfectly and build quality is clean.</p>
+        <div class="testi-author">
+          <div class="avatar">PR</div>
+          <div>
+            <div class="author-name">Priya R.</div>
+            <div class="author-role">Content Creator · Bengaluru</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card anim-scale">
+        <span class="verified">Verified</span>
+        <div class="stars"><span>★★★★★</span></div>
+        <p class="quote">I needed a system urgently and these guys sorted it out way faster than I expected. Quick replies, clear communication and got everything ready without any hassle. Really clutch service.</p>
+        <div class="testi-author">
+          <div class="avatar">VS</div>
+          <div>
+            <div class="author-name">Vikram S.</div>
+            <div class="author-role">Game Developer · Pune</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="cta-wrap">
+      <div class="section-label anim-fade-up">Ready?</div>
+      <h2 class="anim-fade-up">Your rig.<br><span class="a">Your rules.</span></h2>
+      <p class="section-desc anim-fade-up">Fully custom, zero compromise. A machine designed around you — your games, your workflow, your budget.</p>
+      <div class="cta-actions anim-fade-up">
+        <a href="https://wa.me/919108461069" class="btn btn-fill">Start Your Build →</a>
+        <a href="https://wa.me/919108461069" class="btn btn-outline">WhatsApp Us →</a>
+      </div>
+      <p class="cta-fn anim-fade-in">Free consultation · Fully custom · No deposit · Reply within 2 hours</p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <!-- Logo + desc — full width on mobile -->
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="logo-text">CTRL<em>bay</em><em style="color:rgba(74,222,128,0.5);">.in</em></span>
+        </a>
+        <p class="footer-desc">Premium custom gaming PCs built by people who actually care. Every build is handcrafted, tested, and yours.</p>
+      </div>
+      <!-- 3 link columns — compact grid on mobile -->
+      <div class="footer-links-grid">
+        
+          
+        <div>
+          <div class="footer-col-head">Company</div>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Build Gallery</a></li>
+            <li><a href="#">Warranty</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-head">Get in Touch</div>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@ctrlbay.in">hello@ctrlbay.in</a></li>
+            <li><a href="https://wa.me/919108461069">WhatsApp</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Discord</a></li>
+          </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 CTRLbay.in  All rights reserved.</div>
+      <div class="footer-socials">
+        <a href="#">Instagram</a>
+        <a href="#">Discord</a>
+        <a href="#">YouTube</a>
+        <a href="#">Twitter</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── LOADER ── */
+    (function() {
+      const logo = document.getElementById('loader-logo');
+      const text = 'CTRLbay.in';
+      const accents = new Set([4,5,6,7,8,9]); // 'bay.in'
+      text.split('').forEach((ch, i) => {
+        const span = document.createElement('span');
+        span.className = 'lchar' + (accents.has(i) ? ' accent' : '');
+        span.textContent = ch;
+        span.style.animationDelay = (0.04 + i * 0.07) + 's';
+        logo.appendChild(span);
+      });
+
+      /* Dismiss after bar completes */
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('done');
+        setTimeout(() => {
+          document.getElementById('loader').style.display = 'none';
+        }, 900);
+      }, 1900);
+    })();
+
+    /* Scroll progress + sticky nav */
+    window.addEventListener('scroll', () => {
+      const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+      document.getElementById('scroll-bar').style.width = pct + '%';
+      document.getElementById('nav').classList.toggle('stuck', window.scrollY > 50);
+    });
+
+    /* Mobile menu */
+    function toggleMob() {
+      document.getElementById('mobMenu').classList.toggle('open');
+    }
+
+    /* GSAP */
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* Hero entrance — delayed to start after loader exits */
+    const tl = gsap.timeline({ delay: 2.1 });
+    tl.from('#h-head', { opacity: 0, y: 24, duration: 0.75, ease: 'power3.out' })
+      .from('#h-sub',  { opacity: 0, y: 14, duration: 0.55, ease: 'power2.out' }, '-=0.35')
+      .from('#h-act',  { opacity: 0, y: 10, duration: 0.5,  ease: 'power2.out' }, '-=0.25')
+      .from('#h-meta', { opacity: 0, y: 10, duration: 0.5,  ease: 'power2.out' }, '-=0.2');
+
+    /* ── BUBBLE PHYSICS ENGINE ── */
+    (function() {
+      const arena   = document.getElementById('bubble-arena');
+      const labels  = ['Expert Assembly', '1 Year Free Service', 'Fully Custom', 'Zero Bloat'];
+      const sizes   = [150, 130, 160, 120]; // diameter per bubble
+      const W = () => arena.clientWidth;
+      const H = () => arena.clientHeight;
+
+      const bubbles = labels.map((label, i) => {
+        const r = sizes[i] / 2;
+        // initial placement — spread them out
+        const startX = [0.25, 0.65, 0.18, 0.72][i];
+        const startY = [0.22, 0.18, 0.65, 0.62][i];
+
+        return {
+          el: null,
+          label,
+          r,
+          x: startX * (W() - sizes[i]) + r,
+          y: startY * (H() - sizes[i]) + r,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
+          alive: true,
+          popping: false,
+        };
+      });
+
+      /* Build DOM */
+      bubbles.forEach((b, i) => {
+        const el = document.createElement('div');
+        el.className = 'bubble';
+        el.style.cssText = `
+          width:${sizes[i]}px; height:${sizes[i]}px;
+          left:${b.x - b.r}px; top:${b.y - b.r}px;
+        `;
+        const lbl = document.createElement('span');
+        lbl.className = 'bubble-label';
+        lbl.textContent = b.label;
+        lbl.style.fontSize = (sizes[i] > 140 ? 0.82 : 0.72) + 'rem';
+        el.appendChild(lbl);
+        arena.appendChild(el);
+        b.el = el;
+
+        /* Entrance — drop in with a bounce, after loader clears */
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.3)';
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.5s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+          el.style.opacity = '1';
+          el.style.transform = 'scale(1)';
+          setTimeout(() => { el.style.transition = ''; }, 650);
+        }, 2100 + i * 140);
+
+        /* Pop on click */
+        el.addEventListener('click', () => popBubble(i));
+      });
+
+      function popBubble(i) {
+        const b = bubbles[i];
+        if (!b.alive || b.popping) return;
+        b.popping = true;
+
+        /* Particle burst */
+        const cx = b.x, cy = b.y;
+        for (let p = 0; p < 10; p++) {
+          const angle = (p / 10) * Math.PI * 2;
+          const dist  = 40 + Math.random() * 40;
+          const px = document.createElement('div');
+          px.className = 'pop-particle';
+          px.style.cssText = `left:${cx}px;top:${cy}px;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;background:${p % 2 === 0 ? '#4ade80' : '#fff'};`;
+          px.style.animation = 'particle-fly 0.5s ease-out forwards';
+          arena.appendChild(px);
+          setTimeout(() => px.remove(), 520);
+        }
+
+        b.el.classList.add('popping');
+        setTimeout(() => {
+          b.alive = false;
+          b.el.style.display = 'none';
+
+          /* Respawn after 2.5s */
+          setTimeout(() => {
+            b.alive = true;
+            b.popping = false;
+            b.x = b.r + Math.random() * (W() - sizes[i]);
+            b.y = b.r + Math.random() * (H() - sizes[i]);
+            b.vx = (Math.random() - 0.5) * 0.8;
+            b.vy = (Math.random() - 0.5) * 0.8;
+            b.el.classList.remove('popping');
+            b.el.style.display = '';
+            b.el.style.opacity = '0';
+            b.el.style.transform = 'scale(0.2)';
+            b.el.style.transition = 'opacity 0.45s ease, transform 0.55s cubic-bezier(0.34,1.56,0.64,1)';
+            requestAnimationFrame(() => {
+              b.el.style.opacity = '1';
+              b.el.style.transform = 'scale(1)';
+              setTimeout(() => { b.el.style.transition = ''; }, 600);
+            });
+          }, 2500);
+        }, 380);
+      }
+
+      /* Physics loop */
+      const DAMPING = 0.998;
+
+      function tick() {
+        const w = W(), h = H();
+        bubbles.forEach((b, i) => {
+          if (!b.alive) return;
+
+          b.x += b.vx;
+          b.y += b.vy;
+
+          /* Wall bounce */
+          if (b.x - b.r < 0)  { b.x = b.r;    b.vx *= -1; }
+          if (b.x + b.r > w)  { b.x = w - b.r; b.vx *= -1; }
+          if (b.y - b.r < 0)  { b.y = b.r;    b.vy *= -1; }
+          if (b.y + b.r > h)  { b.y = h - b.r; b.vy *= -1; }
+
+          /* Bubble-bubble collision */
+          for (let j = i + 1; j < bubbles.length; j++) {
+            const o = bubbles[j];
+            if (!o.alive) continue;
+            const dx = o.x - b.x, dy = o.y - b.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const minD = b.r + o.r + 4;
+            if (dist < minD && dist > 0.1) {
+              const nx = dx/dist, ny = dy/dist;
+              const overlap = (minD - dist) / 2;
+              b.x -= nx * overlap; b.y -= ny * overlap;
+              o.x += nx * overlap; o.y += ny * overlap;
+              const dot = (b.vx - o.vx)*nx + (b.vy - o.vy)*ny;
+              b.vx -= dot * nx; b.vy -= dot * ny;
+              o.vx += dot * nx; o.vy += dot * ny;
+            }
+          }
+
+          b.vx *= DAMPING;
+          b.vy *= DAMPING;
+
+          /* Keep a minimum drift so bubbles never stop */
+          const speed = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+          if (speed < 0.15) {
+            b.vx += (Math.random() - 0.5) * 0.2;
+            b.vy += (Math.random() - 0.5) * 0.2;
+          }
+
+          if (!b.popping) {
+            b.el.style.left = (b.x - b.r) + 'px';
+            b.el.style.top  = (b.y - b.r) + 'px';
+          }
+        });
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+
+    /* Stats strip — animate numbers when they scroll into view */
+    gsap.from('#stats-strip .stat-item', {
+      opacity: 0, y: 30,
+      duration: 0.7,
+      ease: 'power2.out',
+      stagger: 0.12,
+      scrollTrigger: {
+        trigger: '#stats-strip',
+        start: 'top 90%',
+        toggleActions: 'play none none none'
+      }
+    });
+
+    /*
+      Scroll animations — four distinct types applied to different sections:
+      1. anim-fade-up    → default upward fade (headings, labels, steps)
+      2. anim-fade-in    → pure opacity fade, no movement (supporting text)
+      3. anim-slide-left → slide in from left (why-left column, card 1)
+      4. anim-slide-right→ slide in from right (card 3)
+      5. anim-scale      → subtle scale-up (USP tiles, testimonial cards)
+    */
+
+    /* fade-up */
+    gsap.utils.toArray('.anim-fade-up').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1, y: 0,
+        duration: 0.65,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' },
+        delay: (i % 5) * 0.07
+      });
+    });
+
+    /* fade-in — no Y movement */
+    gsap.utils.toArray('.anim-fade-in').forEach(el => {
+      gsap.to(el, {
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power1.inOut',
+        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+      });
+    });
+
+    /* slide from left */
+    gsap.utils.toArray('.anim-slide-left').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1, x: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' },
+        delay: i * 0.08
+      });
+    });
+
+    /* slide from right */
+    gsap.utils.toArray('.anim-slide-right').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, x: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
+      });
+    });
+
+    /* scale */
+    gsap.utils.toArray('.anim-scale').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1, scale: 1,
+        duration: 0.6,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' },
+        delay: (i % 4) * 0.09
+      });
+    });
+  </script>
+</body>
+</html>
